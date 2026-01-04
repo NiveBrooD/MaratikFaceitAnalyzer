@@ -12,6 +12,7 @@ import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 @Component
@@ -57,7 +58,7 @@ public class FaceitAnalyzerService {
                     .retrieve()
                     .toEntity(MatchResponse.class)
                     .getBody();
-            matchStatistics.add(findMaratAndGetHisStats(matchResponse));
+            matchStatistics.add(findMaratAndGetHisStats(Objects.requireNonNull(matchResponse)));
         });
         return new StatsResponse(
                 matchStatistics.size(),
