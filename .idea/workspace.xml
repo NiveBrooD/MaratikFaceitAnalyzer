@@ -5,10 +5,33 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="f5a56cbc-c912-4911-8754-4c99a9624693" name="Changes" comment="commit">
-      <change afterPath="$PROJECT_DIR$/db_saver/.mvn/wrapper/maven-wrapper.properties" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/db_saver/mvnw" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/faceit_analyzer/.mvn/wrapper/maven-wrapper.properties" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/faceit_analyzer/mvnw" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/db_saver/Dockerfile" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/db_saver/src/main/java/com/ramis/dbsaver/config/KafkaConsumerConfig.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/db_saver/src/main/java/com/ramis/dbsaver/model/Stats.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/db_saver/src/main/java/com/ramis/dbsaver/model/StatsResponse.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/db_saver/src/main/java/com/ramis/dbsaver/model/mapper/StatMapper.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/db_saver/src/main/java/com/ramis/dbsaver/repository/StatsRepository.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/db_saver/src/main/java/com/ramis/dbsaver/service/KafkaConsumerService.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/db_saver/src/main/java/com/ramis/dbsaver/service/StatsService.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/db_saver/src/main/resources/db/changelog/changelog-master.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/db_saver/src/main/resources/db/changelog/changelogs/01-add-stats-table.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/db_saver/src/main/resources/db/changelog/changelogs/02-add-matches.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/docker-compose.yaml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/faceit_analyzer/Dockerfile" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/faceit_analyzer/src/main/java/com/ramis/faceit_analyzer/config/FaceitControllerAdvice.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/faceit_analyzer/src/main/java/com/ramis/faceit_analyzer/config/KafkaProducerConfig.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/faceit_analyzer/src/main/java/com/ramis/faceit_analyzer/model/NoStatistic.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/faceit_analyzer/src/main/java/com/ramis/faceit_analyzer/service/KafkaProducerService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/db_saver/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/db_saver/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/db_saver/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/db_saver/src/main/resources/application.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/faceit_analyzer/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/faceit_analyzer/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/faceit_analyzer/src/main/java/com/ramis/faceit_analyzer/model/FaceitHistory.java" beforeDir="false" afterPath="$PROJECT_DIR$/faceit_analyzer/src/main/java/com/ramis/faceit_analyzer/model/FaceitHistory.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/faceit_analyzer/src/main/java/com/ramis/faceit_analyzer/model/Match.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/faceit_analyzer/src/main/java/com/ramis/faceit_analyzer/model/MatchResponse.java" beforeDir="false" afterPath="$PROJECT_DIR$/faceit_analyzer/src/main/java/com/ramis/faceit_analyzer/model/MatchFullStatistics.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/faceit_analyzer/src/main/java/com/ramis/faceit_analyzer/model/StatsResponse.java" beforeDir="false" afterPath="$PROJECT_DIR$/faceit_analyzer/src/main/java/com/ramis/faceit_analyzer/model/StatsResponse.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/faceit_analyzer/src/main/java/com/ramis/faceit_analyzer/service/FaceitAnalyzerService.java" beforeDir="false" afterPath="$PROJECT_DIR$/faceit_analyzer/src/main/java/com/ramis/faceit_analyzer/service/FaceitAnalyzerService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/faceit_analyzer/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/faceit_analyzer/src/main/resources/application.properties" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -55,35 +78,34 @@
   <component name="ProjectViewState">
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "ModuleVcsDetector.initialDetectionPerformed": "true",
-    "Notification.DisplayName-DoNotAsk-Lombok plugin": "Lombok integration problem",
-    "Notification.DoNotAsk-Lombok plugin": "true",
-    "RequestMappingsPanelOrder0": "0",
-    "RequestMappingsPanelOrder1": "1",
-    "RequestMappingsPanelWidth0": "75",
-    "RequestMappingsPanelWidth1": "75",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "Spring Boot.DbsaverApplication.executor": "Run",
-    "Spring Boot.FaceitAnalyzerApplication.executor": "Run",
-    "git-widget-placeholder": "master",
-    "ignore.virus.scanning.warn.message": "true",
-    "last_opened_file_path": "C:/Users/ramis/IdeaProjects/MaratikFaceitAnalyzer/db_saver",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
+    &quot;Notification.DisplayName-DoNotAsk-Lombok plugin&quot;: &quot;Lombok integration problem&quot;,
+    &quot;Notification.DoNotAsk-Lombok plugin&quot;: &quot;true&quot;,
+    &quot;RequestMappingsPanelOrder0&quot;: &quot;0&quot;,
+    &quot;RequestMappingsPanelOrder1&quot;: &quot;1&quot;,
+    &quot;RequestMappingsPanelWidth0&quot;: &quot;75&quot;,
+    &quot;RequestMappingsPanelWidth1&quot;: &quot;75&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;Spring Boot.DbsaverApplication.executor&quot;: &quot;Run&quot;,
+    &quot;Spring Boot.FaceitAnalyzerApplication.executor&quot;: &quot;Run&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
+    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   },
-  "keyToStringList": {
-    "DatabaseDriversLRU": [
-      "postgresql"
+  &quot;keyToStringList&quot;: {
+    &quot;DatabaseDriversLRU&quot;: [
+      &quot;postgresql&quot;
     ]
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
       <recent name="C:\Users\ramis\IdeaProjects\MaratikFaceitAnalyzer\db_saver\src\main\resources\db\changelog\changelogs" />
@@ -127,7 +149,7 @@
       <workItem from="1767689767423" duration="300000" />
       <workItem from="1767697357762" duration="10804000" />
       <workItem from="1767715043496" duration="4044000" />
-      <workItem from="1767787279580" duration="2207000" />
+      <workItem from="1767787279580" duration="1047000" />
     </task>
     <task id="LOCAL-00001" summary="commit">
       <option name="closed" value="true" />
@@ -145,23 +167,7 @@
       <option name="project" value="LOCAL" />
       <updated>1767530673928</updated>
     </task>
-    <task id="LOCAL-00003" summary="commit">
-      <option name="closed" value="true" />
-      <created>1767788737415</created>
-      <option name="number" value="00003" />
-      <option name="presentableId" value="LOCAL-00003" />
-      <option name="project" value="LOCAL" />
-      <updated>1767788737415</updated>
-    </task>
-    <task id="LOCAL-00004" summary="commit">
-      <option name="closed" value="true" />
-      <created>1767789334754</created>
-      <option name="number" value="00004" />
-      <option name="presentableId" value="LOCAL-00004" />
-      <option name="project" value="LOCAL" />
-      <updated>1767789334754</updated>
-    </task>
-    <option name="localTasksCounter" value="5" />
+    <option name="localTasksCounter" value="3" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
