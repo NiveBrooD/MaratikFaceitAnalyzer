@@ -1,14 +1,20 @@
 package com.ramis.faceit_analyzer.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.Getter;
-import lombok.Setter;
 
 import java.util.List;
 
-@Getter
-@Setter
-public class FaceitHistory {
-    @JsonProperty("items")
-    List<Match> matches;
+@JsonIgnoreProperties(ignoreUnknown = true)
+public record FaceitHistory(
+        @JsonProperty("items")
+        List<Match> matches
+) {
+    public record Match(
+            @JsonProperty("match_id")
+            String matchId,
+
+            @JsonProperty("finished_at")
+            Long finishedAt
+    ) {}
 }

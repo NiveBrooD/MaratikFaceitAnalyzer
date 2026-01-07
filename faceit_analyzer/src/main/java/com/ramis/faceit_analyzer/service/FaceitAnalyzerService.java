@@ -3,24 +3,31 @@ package com.ramis.faceit_analyzer.service;
 import com.ramis.faceit_analyzer.config.FaceitProperties;
 import com.ramis.faceit_analyzer.exception.MaratikNotFoundException;
 import com.ramis.faceit_analyzer.exception.MaratikNotPlayedYesterday;
-import com.ramis.faceit_analyzer.model.*;
+import com.ramis.faceit_analyzer.model.FaceitHistory;
+import com.ramis.faceit_analyzer.model.MatchFullStatistics;
+import com.ramis.faceit_analyzer.model.MatchStatistic;
+import com.ramis.faceit_analyzer.model.StatsResponse;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
 
 import java.time.Instant;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.function.ToDoubleFunction;
+import java.util.stream.Collectors;
 
-@Component
+@Service
 @RequiredArgsConstructor
 public class FaceitAnalyzerService {
 
     private final FaceitProperties faceitProperties;
     private final RestClient restClient;
+    private final KafkaProducerService kafkaProducerService;
 
     public FaceitHistory getYesterdayMatches() {
         return restClient.get()
@@ -29,17 +36,18 @@ public class FaceitAnalyzerService {
                 .getBody();
     }
 
-    public List<Match> filterMatches(FaceitHistory faceitHistory) {
+
+    public List<FaceitHistory.Match> filterMatches(FaceitHistory faceitHistory) {
         LocalDateTime now = LocalDateTime.now(ZoneId.of("Europe/Moscow")).minusDays(1);
-        List<Match> todayMatches = new CopyOnWriteArrayList<>();
-        faceitHistory.getMatches().stream().parallel().forEach((match -> {
-            Long finishedAt = match.getFinishedAt();
+        List<FaceitHistory.Match> todayMatches = new CopyOnWriteArrayList<>();
+        faceitHistory.matches().stream().parallel().forEach((match -> {
+            Long finishedAt = match.finishedAt();
             LocalDateTime matchDate = LocalDateTime.ofInstant(
                     Instant.ofEpochSecond(finishedAt), ZoneId.of("Europe/Moscow")
             );
             if (now.getYear() == matchDate.getYear()
                 && now.getMonth() == matchDate.getMonth()
-                && now.getDayOfMonth() == matchDate.getDayOfMonth()) {
+                && now.getDayOfMonth()  == matchDate.getDayOfMonth()) {
                 todayMatches.add(match);
             }
         }));
@@ -50,102 +58,43 @@ public class FaceitAnalyzerService {
     }
 
     public StatsResponse summaryAllStats() {
-        List<Match> matches = filterMatches(getYesterdayMatches());
-        List<MatchStatistic> matchStatistics = new CopyOnWriteArrayList<>();
-        matches.stream().parallel().forEach(match -> {
-            MatchResponse matchResponse = restClient.get()
-                    .uri("/matches/" + match.getMatchId() + "/stats")
-                    .retrieve()
-                    .toEntity(MatchResponse.class)
-                    .getBody();
-            matchStatistics.add(findMaratAndGetHisStats(Objects.requireNonNull(matchResponse)));
-        });
-        return new StatsResponse(
+        List<FaceitHistory.Match> matches = filterMatches(getYesterdayMatches());
+        List<MatchStatistic> matchStatistics = matches.parallelStream()
+                .map(match -> {
+                    MatchFullStatistics matchFullStatistics = restClient.get()
+                            .uri("/matches/" + match.matchId() + "/stats")
+                            .retrieve()
+                            .toEntity(MatchFullStatistics.class)
+                            .getBody();
+                    return findMaratAndGetHisStats(Objects.requireNonNull(matchFullStatistics));
+                }).collect(Collectors.toList());
+
+        StatsResponse statsResponse = new StatsResponse(
                 matchStatistics.size(),
                 findWins(matchStatistics),
                 matchStatistics.size() - findWins(matchStatistics),
-                findAvgKd(matchStatistics),
-                findAvgAdr(matchStatistics),
-                findAvgKills(matchStatistics),
-                findAvgDeaths(matchStatistics),
-                findAvgAssists(matchStatistics),
-                findAvgHs(matchStatistics),
-                findAvgDoubleKills(matchStatistics),
-                findAvgTripleKills(matchStatistics),
-                findAvgQuadroKills(matchStatistics),
-                findAvgPentaKills(matchStatistics),
+                LocalDate.now(),
+                findAvg(matchStatistics, MatchStatistic::getKdRatio),
+                findAvg(matchStatistics, MatchStatistic::getAdr),
+                findAvg(matchStatistics, MatchStatistic::getKills),
+                findAvg(matchStatistics, MatchStatistic::getDeaths),
+                findAvg(matchStatistics, MatchStatistic::getAssists),
+                findAvg(matchStatistics, MatchStatistic::getHeadshotsPercentage),
+                findAvg(matchStatistics, MatchStatistic::getDoubleKills),
+                findAvg(matchStatistics, MatchStatistic::getTripleKills),
+                findAvg(matchStatistics, MatchStatistic::getQuadroKills),
+                findAvg(matchStatistics, MatchStatistic::getPentaKills),
                 matchStatistics.stream().map(MatchStatistic::getMatchId).toList()
         );
+        kafkaProducerService.sendStats(statsResponse);
+        return statsResponse;
     }
 
-    private Double findAvgPentaKills(List<MatchStatistic> matchStatistics) {
-        return matchStatistics.stream()
-                .map(MatchStatistic::getPentaKills)
-                .mapToDouble(Double::valueOf)
-                .average().orElse(0.0);
-    }
-
-    private Double findAvgQuadroKills(List<MatchStatistic> matchStatistics) {
-        return matchStatistics.stream()
-                .map(MatchStatistic::getQuadroKills)
-                .mapToDouble(Double::valueOf)
-                .average().orElse(0.0);
-    }
-
-    private Double findAvgTripleKills(List<MatchStatistic> matchStatistics) {
-        return matchStatistics.stream()
-                .map(MatchStatistic::getTripleKills)
-                .mapToDouble(Double::valueOf)
-                .average().orElse(0.0);
-    }
-
-    private Double findAvgDoubleKills(List<MatchStatistic> matchStatistics) {
-        return matchStatistics.stream()
-                .map(MatchStatistic::getDoubleKills)
-                .mapToDouble(Double::valueOf)
-                .average().orElse(0.0);
-    }
-
-    private Double findAvgHs(List<MatchStatistic> matchStatistics) {
-        return matchStatistics.stream()
-                .map(MatchStatistic::getHeadshotsPercentage)
-                .mapToDouble(Double::valueOf)
-                .average().orElse(0.0);
-    }
-
-    private Double findAvgAssists(List<MatchStatistic> matchStatistics) {
-        return matchStatistics.stream()
-                .map(MatchStatistic::getAssists)
-                .mapToDouble(Double::valueOf)
-                .average().orElse(0.0);
-    }
-
-    private Double findAvgDeaths(List<MatchStatistic> matchStatistics) {
-        return matchStatistics.stream()
-                .map(MatchStatistic::getDeaths)
-                .mapToDouble(Double::valueOf)
-                .average().orElse(0.0);
-    }
-
-    private Double findAvgKills(List<MatchStatistic> matchStatistics) {
-        return matchStatistics.stream()
-                .map(MatchStatistic::getKills)
-                .mapToDouble(Double::valueOf)
-                .average().orElse(0.0);
-    }
-
-    private Double findAvgAdr(List<MatchStatistic> matchStatistics) {
-        return matchStatistics.stream()
-                .map(MatchStatistic::getAdr)
-                .mapToDouble(Double::doubleValue)
-                .average().orElse(0.0);
-    }
-
-    private Double findAvgKd(List<MatchStatistic> matchStatistics) {
-        return matchStatistics.stream()
-                .map(MatchStatistic::getKdRatio)
-                .mapToDouble(Double::doubleValue)
-                .average().orElse(0.0);
+    private Double findAvg(List<MatchStatistic> matchStatistic, ToDoubleFunction<MatchStatistic> mapper) {
+        return matchStatistic.stream()
+                .mapToDouble(mapper)
+                .average()
+                .orElse(0.0);
     }
 
     private Integer findWins(List<MatchStatistic> matchStatistics) {
@@ -155,8 +104,8 @@ public class FaceitAnalyzerService {
                 .sum();
     }
 
-    private MatchStatistic findMaratAndGetHisStats(MatchResponse matchResponse) {
-        return matchResponse.rounds()
+    private MatchStatistic findMaratAndGetHisStats(MatchFullStatistics matchFullStatistics) {
+        return matchFullStatistics.rounds()
                 .stream()
                 .flatMap(round -> round.teams().stream()
                         .flatMap(team -> team.players().stream()
