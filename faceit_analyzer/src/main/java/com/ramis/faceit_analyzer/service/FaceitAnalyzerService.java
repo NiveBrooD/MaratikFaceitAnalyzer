@@ -47,7 +47,7 @@ public class FaceitAnalyzerService {
             );
             if (now.getYear() == matchDate.getYear()
                 && now.getMonth() == matchDate.getMonth()
-                && now.getDayOfMonth()  == matchDate.getDayOfMonth()) {
+                && now.getDayOfMonth() == matchDate.getDayOfMonth()) {
                 todayMatches.add(match);
             }
         }));
@@ -86,6 +86,7 @@ public class FaceitAnalyzerService {
                 findAvg(matchStatistics, MatchStatistic::getPentaKills),
                 matchStatistics.stream().map(MatchStatistic::getMatchId).toList()
         );
+
         kafkaProducerService.sendStats(statsResponse);
         return statsResponse;
     }
