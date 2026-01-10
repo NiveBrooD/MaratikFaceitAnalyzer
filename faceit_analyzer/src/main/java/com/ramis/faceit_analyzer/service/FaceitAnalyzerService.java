@@ -3,10 +3,7 @@ package com.ramis.faceit_analyzer.service;
 import com.ramis.faceit_analyzer.config.FaceitProperties;
 import com.ramis.faceit_analyzer.exception.MaratikNotFoundException;
 import com.ramis.faceit_analyzer.exception.MaratikNotPlayedYesterday;
-import com.ramis.faceit_analyzer.model.FaceitHistory;
-import com.ramis.faceit_analyzer.model.MatchFullStatistics;
-import com.ramis.faceit_analyzer.model.MatchStatistic;
-import com.ramis.faceit_analyzer.model.StatsResponse;
+import com.ramis.faceit_analyzer.model.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
@@ -29,7 +26,23 @@ public class FaceitAnalyzerService {
     private final RestClient restClient;
     private final KafkaProducerService kafkaProducerService;
 
-    public FaceitHistory getYesterdayMatches() {
+    public StatsResponse getStats(TimeFrame timeFrame) {
+        return switch (timeFrame) {
+            case YESTERDAY_PLAYED -> summaryAllStats(filterMatches(getYesterdayMatches()));
+            case LAST_FIVE_PLAYED -> summaryAllStats(getLastFiveMatches().matches());
+        };
+    }
+
+    private FaceitHistory getLastFiveMatches() {
+        return restClient
+                .get()
+                .uri("/players/" + faceitProperties.getId() + "/history?limit=5")
+                .retrieve()
+                .toEntity(FaceitHistory.class)
+                .getBody();
+    }
+
+    private FaceitHistory getYesterdayMatches() {
         return restClient.get()
                 .uri("/players/" + faceitProperties.getId() + "/history")
                 .retrieve().toEntity(FaceitHistory.class)
@@ -37,7 +50,7 @@ public class FaceitAnalyzerService {
     }
 
 
-    public List<FaceitHistory.Match> filterMatches(FaceitHistory faceitHistory) {
+    private List<FaceitHistory.Match> filterMatches(FaceitHistory faceitHistory) {
         LocalDateTime now = LocalDateTime.now(ZoneId.of("Europe/Moscow")).minusDays(1);
         List<FaceitHistory.Match> todayMatches = new CopyOnWriteArrayList<>();
         faceitHistory.matches().stream().parallel().forEach((match -> {
@@ -57,8 +70,10 @@ public class FaceitAnalyzerService {
         return todayMatches;
     }
 
-    public StatsResponse summaryAllStats() {
-        List<FaceitHistory.Match> matches = filterMatches(getYesterdayMatches());
+    private StatsResponse summaryAllStats(List<FaceitHistory.Match> matches) {
+        if (matches == null || matches.isEmpty()) {
+            throw new MaratikNotFoundException("No matches found, maybe he didn't played for month");
+        }
         List<MatchStatistic> matchStatistics = matches.parallelStream()
                 .map(match -> {
                     MatchFullStatistics matchFullStatistics = restClient.get()

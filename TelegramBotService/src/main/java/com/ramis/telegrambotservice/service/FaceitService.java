@@ -17,12 +17,15 @@ public class FaceitService {
     private final RestClient restClient;
     private final ObjectMapper objectMapper;
 
-    public Request getStatistics() {
+    public Request getYesterdayStatistics() {
         String body = restClient.get()
-                .uri("")
+                .uri("/yesterday")
                 .retrieve()
                 .body(String.class);
+        return getStatistics(body);
+    }
 
+    private Request getStatistics(String body) {
         if (body == null) {
             return new NoStatistics("Empty body, Something went wrong");
         }
@@ -43,5 +46,13 @@ public class FaceitService {
             }
         }
         return new NoStatistics("Something went wrong");
+    }
+
+    public Request getLastFiveMatchesStatistics() {
+        String body = restClient.get()
+                .uri("/last_five")
+                .retrieve()
+                .body(String.class);
+        return getStatistics(body);
     }
 }

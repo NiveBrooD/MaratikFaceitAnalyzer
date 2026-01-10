@@ -21,9 +21,6 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 @RequiredArgsConstructor
 public class TelegramBot extends TelegramLongPollingBot {
 
-//    @Value("${telegram.webhook-path}")
-//    private String botPath;
-
     @Value("${telegram.bot-name}")
     private String botUsername;
 
@@ -36,12 +33,13 @@ public class TelegramBot extends TelegramLongPollingBot {
     public void onUpdateReceived(Update update) {
         if (update.hasMessage() && update.getMessage().hasText()) {
             String message = update.getMessage().getText();
-            Long chatId = update.getMessage().getChatId();
             try {
-                if (message.startsWith("/get_stats")) {
-                    getStatsCommand(update);
+                if (message.startsWith("/get_yesterday_stats")) {
+                    getYesterdayStatsCommand(update);
                 } else if (message.startsWith("/start")) {
                     startCommand(update);
+                } else if (message.startsWith("/last_five_matches")) {
+                    getLastFiveMatchesCommand(update);
                 } else {
                     echo(update);
                 }
@@ -53,43 +51,48 @@ public class TelegramBot extends TelegramLongPollingBot {
 
 
     private void startCommand(Update update) throws TelegramApiException {
-        if (update.getMessage().getText().startsWith("/start")) {
-            execute(new SendMessage(update.getMessage().getChatId().toString(), "Let's start"));
-            log.info("Reply send.");
-        } else {
-            log.info("It was not Start Command.");
-        }
+        execute(new SendMessage(update.getMessage().getChatId().toString(), "Let's start"));
+        log.info("Reply send.");
     }
 
-    private void getStatsCommand(Update update) throws TelegramApiException {
-        Request statistics = faceitService.getStatistics();
+    private void getYesterdayStatsCommand(Update update) throws TelegramApiException {
+        Request statistics = faceitService.getYesterdayStatistics();
+        extractDataAndSendMessage(update, statistics);
+    }
+
+    private void getLastFiveMatchesCommand(Update update) throws TelegramApiException {
+        Request statistics = faceitService.getLastFiveMatchesStatistics();
+        extractDataAndSendMessage(update, statistics);
+    }
+
+    private void extractDataAndSendMessage(Update update, Request statistics) throws TelegramApiException {
         if (statistics instanceof NoStatistics noStatistics) {
             execute(new SendMessage(update.getMessage().getChatId().toString(), noStatistics.message()));
         } else {
             if (statistics instanceof StatsResponse statsResponse) {
                 String statsStr = String.format("""
-            Статистика за %s
-            
-            Игр сыграно: %d
-            Побед: %d
-            Поражений: %d
-            
-            Средний K/D: %.2f
-            Средний ADR: %.1f
-            Средние убийства: %.1f
-            Средние смерти: %.1f
-            Средние ассисты: %.1f
-            Средние хедшоты: %.1f%%
-            
-            Мультикиллы за игру:
-            Double (2x): %.1f
-            Triple (3x): %.1f
-            Quadro (4x): %.1f
-            Penta (5x): %.1f
-            
-            ID матчей:
-            %s
-            """,
+                                Статистика за %s
+                                
+                                Игр сыграно: %d
+                                Побед: %d
+                                Поражений: %d
+                                
+                                Средний K/D: %.2f
+                                Средний ADR: %.1f
+                                Средние убийства: %.1f
+                                Средние смерти: %.1f
+                                Средние ассисты: %.1f
+                                Средние хедшоты: %.1f%%
+                                
+                                Мультикиллы за игру:
+                                Double (2x): %.2f
+                                Triple (3x): %.2f
+                                Quadro (4x): %.2f
+                                Penta (5x): %.2f
+                                
+                                ID матчей:
+                                %s
+                                """,
                         statsResponse.date(),
                         statsResponse.gamesPlayed(),
                         statsResponse.wins(),
