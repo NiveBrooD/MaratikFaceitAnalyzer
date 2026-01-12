@@ -10,7 +10,7 @@ public class RestClientConfig {
     @Bean
     public RestClient restClient() {
         return RestClient.builder()
-                .baseUrl("http://localhost:8081/api/v1/faceit")
+                .baseUrl("http://localhost:8081/api/v1/faceit/statistics")
                 .build();
     }
 }

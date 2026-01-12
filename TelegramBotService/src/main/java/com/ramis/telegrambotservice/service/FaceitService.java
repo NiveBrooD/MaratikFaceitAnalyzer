@@ -19,7 +19,23 @@ public class FaceitService {
 
     public Request getYesterdayStatistics() {
         String body = restClient.get()
-                .uri("/yesterday")
+                .uri("/days/yesterday")
+                .retrieve()
+                .body(String.class);
+        return getStatistics(body);
+    }
+
+    public Request getLastFiveMatchesStatistics() {
+        String body = restClient.get()
+                .uri("/matches/last_five")
+                .retrieve()
+                .body(String.class);
+        return getStatistics(body);
+    }
+
+    public Request getStatisticForDate(String date) {
+        String body = restClient.get()
+                .uri("/days/" + date)
                 .retrieve()
                 .body(String.class);
         return getStatistics(body);
@@ -46,13 +62,5 @@ public class FaceitService {
             }
         }
         return new NoStatistics("Something went wrong");
-    }
-
-    public Request getLastFiveMatchesStatistics() {
-        String body = restClient.get()
-                .uri("/last_five")
-                .retrieve()
-                .body(String.class);
-        return getStatistics(body);
     }
 }

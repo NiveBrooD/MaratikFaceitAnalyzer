@@ -8,10 +8,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
 
-import java.time.Instant;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
+import java.time.*;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -22,15 +20,31 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class FaceitAnalyzerService {
 
+    public static final DateTimeFormatter YYYY_MM_DD = DateTimeFormatter.ofPattern("yyyy-MM-dd");
     private final FaceitProperties faceitProperties;
     private final RestClient restClient;
     private final KafkaProducerService kafkaProducerService;
 
     public StatsResponse getStats(TimeFrame timeFrame) {
         return switch (timeFrame) {
-            case YESTERDAY_PLAYED -> summaryAllStats(filterMatches(getYesterdayMatches()));
+            case YESTERDAY_PLAYED -> summaryAllStats(filterMatches(getLastFortyMatches()));
             case LAST_FIVE_PLAYED -> summaryAllStats(getLastFiveMatches().matches());
         };
+    }
+
+    public StatsResponse getStats(String date) {
+        return summaryAllStats(getMatchesForDate(date).matches());
+    }
+
+    private FaceitHistory getMatchesForDate(String date) {
+        long start = getStartOfDayTimestamp(date);
+        long end = getEndOfDayTimestamp(date);
+        String bounds = String.format("/history?from=%d&to=%d&limit=35", start, end);
+        return restClient.get()
+                .uri("/players/" + faceitProperties.getId() + bounds)
+                .retrieve()
+                .toEntity(FaceitHistory.class)
+                .getBody();
     }
 
     private FaceitHistory getLastFiveMatches() {
@@ -42,18 +56,32 @@ public class FaceitAnalyzerService {
                 .getBody();
     }
 
-    private FaceitHistory getYesterdayMatches() {
+    private FaceitHistory getLastFortyMatches() {
         return restClient.get()
-                .uri("/players/" + faceitProperties.getId() + "/history")
-                .retrieve().toEntity(FaceitHistory.class)
+                .uri("/players/" + faceitProperties.getId() + "/history?limit=40")
+                .retrieve()
+                .toEntity(FaceitHistory.class)
                 .getBody();
+    }
+
+    private Long getStartOfDayTimestamp(String date) {
+        return LocalDate.parse(date, YYYY_MM_DD)
+                .atStartOfDay(ZoneOffset.UTC)
+                .toEpochSecond();
+    }
+
+    private Long getEndOfDayTimestamp(String date) {
+        return LocalDate.parse(date, YYYY_MM_DD)
+                .atTime(LocalTime.MAX)
+                .atZone(ZoneOffset.UTC)
+                .toEpochSecond();
     }
 
 
     private List<FaceitHistory.Match> filterMatches(FaceitHistory faceitHistory) {
         LocalDateTime now = LocalDateTime.now(ZoneId.of("Europe/Moscow")).minusDays(1);
         List<FaceitHistory.Match> todayMatches = new CopyOnWriteArrayList<>();
-        faceitHistory.matches().stream().parallel().forEach((match -> {
+        faceitHistory.matches().forEach((match -> {
             Long finishedAt = match.finishedAt();
             LocalDateTime matchDate = LocalDateTime.ofInstant(
                     Instant.ofEpochSecond(finishedAt), ZoneId.of("Europe/Moscow")
@@ -72,7 +100,7 @@ public class FaceitAnalyzerService {
 
     private StatsResponse summaryAllStats(List<FaceitHistory.Match> matches) {
         if (matches == null || matches.isEmpty()) {
-            throw new MaratikNotFoundException("No matches found, maybe he didn't played for month");
+            throw new MaratikNotFoundException("No matches found, maybe he didn't played.");
         }
         List<MatchStatistic> matchStatistics = matches.parallelStream()
                 .map(match -> {
@@ -88,7 +116,7 @@ public class FaceitAnalyzerService {
                 matchStatistics.size(),
                 findWins(matchStatistics),
                 matchStatistics.size() - findWins(matchStatistics),
-                LocalDate.now(),
+                LocalDate.now().minusDays(1),
                 findAvg(matchStatistics, MatchStatistic::getKdRatio),
                 findAvg(matchStatistics, MatchStatistic::getAdr),
                 findAvg(matchStatistics, MatchStatistic::getKills),
@@ -102,7 +130,7 @@ public class FaceitAnalyzerService {
                 matchStatistics.stream().map(MatchStatistic::getMatchId).toList()
         );
 
-        kafkaProducerService.sendStats(statsResponse);
+//        kafkaProducerService.sendStats(statsResponse);
         return statsResponse;
     }
 

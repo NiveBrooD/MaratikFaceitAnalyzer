@@ -4,10 +4,24 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="f5a56cbc-c912-4911-8754-4c99a9624693" name="Changes" comment="commit ADD TelegramBotService">
+    <list default="true" id="f5a56cbc-c912-4911-8754-4c99a9624693" name="Changes" comment="ADD new feature &amp; FIX">
+      <change afterPath="$PROJECT_DIR$/TelegramBotService/src/main/java/com/ramis/telegrambotservice/model/Chat.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/TelegramBotService/src/main/java/com/ramis/telegrambotservice/repository/ChatRepository.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/TelegramBotService/src/main/java/com/ramis/telegrambotservice/service/ChatService.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/TelegramBotService/src/main/resources/db/changelog/changelog-master.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/TelegramBotService/src/main/resources/db/changelog/history/2026/01/12/01-01-create-chats-table.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/dataSources.local.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources.local.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/dataSources.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/TelegramBotService/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/TelegramBotService/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/TelegramBotService/src/main/java/com/ramis/telegrambotservice/TelegramBotServiceApplication.java" beforeDir="false" afterPath="$PROJECT_DIR$/TelegramBotService/src/main/java/com/ramis/telegrambotservice/TelegramBotServiceApplication.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/TelegramBotService/src/main/java/com/ramis/telegrambotservice/config/RestClientConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/TelegramBotService/src/main/java/com/ramis/telegrambotservice/config/RestClientConfig.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/TelegramBotService/src/main/java/com/ramis/telegrambotservice/service/FaceitService.java" beforeDir="false" afterPath="$PROJECT_DIR$/TelegramBotService/src/main/java/com/ramis/telegrambotservice/service/FaceitService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/TelegramBotService/src/main/java/com/ramis/telegrambotservice/service/TelegramBot.java" beforeDir="false" afterPath="$PROJECT_DIR$/TelegramBotService/src/main/java/com/ramis/telegrambotservice/service/TelegramBot.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/TelegramBotService/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/TelegramBotService/src/main/resources/application.properties" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/faceit_analyzer/src/main/java/com/ramis/faceit_analyzer/controller/FaceitController.java" beforeDir="false" afterPath="$PROJECT_DIR$/faceit_analyzer/src/main/java/com/ramis/faceit_analyzer/controller/FaceitController.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/faceit_analyzer/src/main/java/com/ramis/faceit_analyzer/service/FaceitAnalyzerService.java" beforeDir="false" afterPath="$PROJECT_DIR$/faceit_analyzer/src/main/java/com/ramis/faceit_analyzer/service/FaceitAnalyzerService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/faceit_analyzer/src/test/java/com/ramis/faceit_analyzer/FaceitAnalyzerApplicationTests.java" beforeDir="false" afterPath="$PROJECT_DIR$/faceit_analyzer/src/test/java/com/ramis/faceit_analyzer/FaceitAnalyzerApplicationTests.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -19,9 +33,10 @@
       <list>
         <option value="Exception" />
         <option value="Dockerfile" />
-        <option value="Class" />
         <option value="Record" />
+        <option value="Enum" />
         <option value="Interface" />
+        <option value="Class" />
       </list>
     </option>
   </component>
@@ -56,6 +71,7 @@
   </component>
   <component name="PropertiesComponent">{
   &quot;keyToString&quot;: {
+    &quot;JUnit.FaceitAnalyzerApplicationTests.test.executor&quot;: &quot;Run&quot;,
     &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
     &quot;Notification.DisplayName-DoNotAsk-Lombok plugin&quot;: &quot;Lombok integration problem&quot;,
     &quot;Notification.DoNotAsk-Lombok plugin&quot;: &quot;true&quot;,
@@ -86,11 +102,15 @@
   }
 }</component>
   <component name="RecentsManager">
+    <key name="CreateClassDialog.RecentsKey">
+      <recent name="com.ramis.telegrambotservice.model" />
+    </key>
     <key name="CopyFile.RECENT_KEYS">
       <recent name="C:\Users\ramis\IdeaProjects\MaratikFaceitAnalyzer\db_saver" />
       <recent name="C:\Users\ramis\IdeaProjects\MaratikFaceitAnalyzer\faceit_analyzer" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\ramis\IdeaProjects\MaratikFaceitAnalyzer\TelegramBotService\src\main\resources\db\changelog" />
       <recent name="C:\Users\ramis\IdeaProjects\MaratikFaceitAnalyzer\db_saver\src\main\resources\db\changelog\changelogs" />
     </key>
     <key name="CopyClassDialog.RECENTS_KEY">
@@ -108,6 +128,22 @@
     </option>
   </component>
   <component name="RunManager" selected="Spring Boot.TelegramBotServiceApplication">
+    <configuration name="FaceitAnalyzerApplicationTests.test" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="faceit_analyzer" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="com.ramis.faceit_analyzer.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="com.ramis.faceit_analyzer" />
+      <option name="MAIN_CLASS_NAME" value="com.ramis.faceit_analyzer.FaceitAnalyzerApplicationTests" />
+      <option name="METHOD_NAME" value="test" />
+      <option name="TEST_OBJECT" value="method" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
     <configuration name="DbsaverApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" nameIsGenerated="true">
       <module name="db_saver" />
       <option name="SPRING_BOOT_MAIN_CLASS" value="com.ramis.dbsaver.DbsaverApplication" />
@@ -129,6 +165,11 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="JUnit.FaceitAnalyzerApplicationTests.test" />
+      </list>
+    </recent_temporary>
   </component>
   <component name="SharedIndexes">
     <attachedChunks>
@@ -155,7 +196,11 @@
       <workItem from="1767787279580" duration="1047000" />
       <workItem from="1767957047350" duration="4524000" />
       <workItem from="1767966694844" duration="8448000" />
-      <workItem from="1768047178686" duration="1360000" />
+      <workItem from="1768047178686" duration="4564000" />
+      <workItem from="1768118065366" duration="7819000" />
+      <workItem from="1768205803173" duration="4001000" />
+      <workItem from="1768215680745" duration="4523000" />
+      <workItem from="1768226732107" duration="5620000" />
     </task>
     <task id="LOCAL-00001" summary="commit">
       <option name="closed" value="true" />
@@ -285,7 +330,15 @@
       <option name="project" value="LOCAL" />
       <updated>1767975029331</updated>
     </task>
-    <option name="localTasksCounter" value="17" />
+    <task id="LOCAL-00017" summary="ADD new feature &amp; FIX">
+      <option name="closed" value="true" />
+      <created>1768051029674</created>
+      <option name="number" value="00017" />
+      <option name="presentableId" value="LOCAL-00017" />
+      <option name="project" value="LOCAL" />
+      <updated>1768051029674</updated>
+    </task>
+    <option name="localTasksCounter" value="18" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -294,6 +347,7 @@
   <component name="VcsManagerConfiguration">
     <MESSAGE value="commit" />
     <MESSAGE value="commit ADD TelegramBotService" />
-    <option name="LAST_COMMIT_MESSAGE" value="commit ADD TelegramBotService" />
+    <MESSAGE value="ADD new feature &amp; FIX" />
+    <option name="LAST_COMMIT_MESSAGE" value="ADD new feature &amp; FIX" />
   </component>
 </project>
